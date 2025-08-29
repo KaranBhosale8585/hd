@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import User from "@/models/User";
 import { connectDB } from "@/lib/connectDB";
-import { otpStore } from "@/models/otpStore";
-import { sendOtp } from "@/models/sendOtp";
+import { otpStore } from "@/utils/otpStore";
+import { sendOtp } from "@/utils/sendOtp";
 
 export async function POST(req: NextRequest) {
   const { email } = await req.json();

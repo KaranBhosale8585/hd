@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import User from "@/models/User";
+import { otpStore } from "@/utils/otpStore";
 import { connectDB } from "@/lib/connectDB";
-import { otpStore } from "@/models/otpStore";
 import { generateToken } from "@/utils/token";
 import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest) {
-  const { email, otp, name } = await req.json();
+  const { email, otp, name} = await req.json();
 
-  if (!otp || !email || !name) {
+  if (!otp || !email) {
     return NextResponse.json(
       { error: "Missing otp, email or name" },
       { status: 400 }
     );
   }
 
-  const existingRecord = otpStore.get(email);
+  const existingRecord = otpStore.get(email)
   if (!existingRecord) {
     return NextResponse.json({ error: "OTP not found" }, { status: 400 });
   }
