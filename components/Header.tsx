@@ -26,14 +26,14 @@ const Header = () => {
           href="/"
           className="text-2xl flex items-center font-bold text-gray-800 hover:text-black transition"
         >
-          <Loader className="inline-block mr-2" />
+          <Loader className="inline-block text-blue-600 mr-2" />
           <p>Dashboard</p>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-700">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-md text-gray-600 hover:bg-red-50 hover:text-red-600 transition"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-md text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition"
           >
             <LogOut size={16} />
             Logout

@@ -159,7 +159,7 @@ export default function OtpLogin() {
               <div className="flex justify-between items-center text-sm mb-4">
                 <button
                   onClick={sendOtp}
-                  className="bg-blue-600 underline hover:text-gray-700 disabled:opacity-50"
+                  className="text-blue-600 underline hover:text-gray-700 disabled:opacity-50"
                   disabled={loading}
                 >
                   Resend OTP
@@ -177,7 +177,7 @@ export default function OtpLogin() {
 
               <button
                 onClick={verifyOtp}
-                className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition disabled:opacity-50"
+                className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-gray-800 transition disabled:opacity-50"
                 disabled={loading}
               >
                 {loading ? "Verifying..." : "Sign In"}
