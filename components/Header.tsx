@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { Menu, X, LogOut, Loader } from "lucide-react";
+import { LogOut, Loader } from "lucide-react";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,29 +41,12 @@ const Header = () => {
         </nav>
 
         <button
-          className="md:hidden text-gray-700"
-          onClick={() => setIsOpen((prev) => !prev)}
+          className="md:hidden flex gap-1 items-center rounded-md text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition"
         >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+            <LogOut size={16} />
+            Logout
         </button>
       </div>
-
-      {isOpen && (
-        <div className="md:hidden px-4 pb-4 space-y-2 text-sm font-medium text-gray-700 animate-slide-down">
-          <button
-            onClick={() => {
-              setIsOpen(false);
-              handleLogout();
-            }}
-            className="block w-full px-3 py-2 rounded-md text-left hover:bg-red-50 hover:text-red-600 transition"
-          >
-            <div className="flex items-center gap-2">
-              <LogOut size={16} />
-              Logout
-            </div>
-          </button>
-        </div>
-      )}
     </header>
   );
 };
