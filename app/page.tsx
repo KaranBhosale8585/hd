@@ -6,61 +6,93 @@ import { toast } from "react-hot-toast";
 import { Trash2, X } from "lucide-react";
 import Header from "@/components/Header";
 
+// ✅ Define types
+type User = {
+  name: string;
+  email: string;
+};
+
+type Note = {
+  _id: string;
+  title: string;
+  description: string;
+  createdAt: string;
+};
+
 export default function Dashboard() {
-  const [user, setUser] = useState<any>(null);
-  const [notes, setNotes] = useState<any[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedNote, setSelectedNote] = useState<any>(null);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
   useEffect(() => {
-    fetch("/api/user")
-      .then((res) => res.json())
-      .then((data) => {
-        setUser(data.user);
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("/api/user");
+        if (!res.ok) throw new Error("Failed to fetch user data");
+
+        const data = await res.json();
+        setUser(data.user || null);
         setNotes(data.notes || []);
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to load user data");
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchUser();
   }, []);
 
   const createNote = async () => {
     if (!newTitle.trim()) return toast.error("Title is required");
     if (!newDescription.trim()) return toast.error("Description is required");
 
-    const res = await fetch("/api/notes/create", {
-      method: "POST",
-      body: JSON.stringify({ title: newTitle, description: newDescription }),
-    });
+    try {
+      const res = await fetch("/api/notes/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }, // ✅ fixed
+        body: JSON.stringify({ title: newTitle, description: newDescription }),
+      });
 
-    const data = await res.json();
-    if (!res.ok) return toast.error(data.error || "Failed to create note");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create note");
 
-    setNotes((prev) => [...prev, data]);
-    setNewTitle("");
-    setNewDescription("");
-    setIsModalOpen(false);
-    toast.success("Note created");
+      setNotes((prev) => [...prev, data]);
+      setNewTitle("");
+      setNewDescription("");
+      setIsModalOpen(false);
+      toast.success("Note created");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create note");
+    }
   };
 
   const deleteNote = async (id: string) => {
-    const res = await fetch("/api/notes/delete", {
-      method: "DELETE",
-      body: JSON.stringify({ id }),
-    });
+    try {
+      const res = await fetch("/api/notes/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" }, // ✅ fixed
+        body: JSON.stringify({ id }),
+      });
 
-    const data = await res.json();
-    if (!res.ok) return toast.error(data.error || "Failed to delete");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete note");
 
-    setNotes((prev) => prev.filter((n) => n._id !== id));
-    toast.success("Note deleted");
+      setNotes((prev) => prev.filter((n) => n._id !== id));
+      toast.success("Note deleted");
+    } catch (error: any) {
+      toast.error(error.message || "Delete failed");
+    }
   };
 
   if (loading) {
     return (
       <p className="text-center text-gray-500 text-sm mt-10 animate-pulse">
-        Loading...
+        Loading <span className="animate-spin inline-block">⏳</span>
       </p>
     );
   }
@@ -68,7 +100,6 @@ export default function Dashboard() {
   if (!user) {
     return (
       <>
-        {" "}
         <Header />
         <p className="text-center text-red-600 font-medium mt-10">
           Unauthorized access
@@ -92,7 +123,7 @@ export default function Dashboard() {
           <div className="flex justify-center sm:justify-end">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="w-full h-14 sm:w-auto py-2 px-4 bg-black text-white rounded-lg hover:bg-gray-900 transition font-medium"
+              className="w-full h-14 sm:w-auto py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
             >
               + Create Note
             </button>
@@ -132,6 +163,7 @@ export default function Dashboard() {
                           e.stopPropagation();
                           deleteNote(note._id);
                         }}
+                        aria-label="Delete note"
                       >
                         <Trash2 className="w-5 h-5 text-red-500 hover:text-red-700" />
                       </button>
@@ -162,28 +194,31 @@ export default function Dashboard() {
             >
               <button
                 onClick={() => setIsModalOpen(false)}
+                aria-label="Close modal"
                 className="absolute top-3 right-3 text-gray-500 hover:text-black"
               >
                 <X className="w-5 h-5" />
               </button>
-              <h3 className="text-xl font-semibold">Create a New Note</h3>
+              <h3 className="text-xl text-black font-semibold">
+                Create a New Note
+              </h3>
               <input
                 type="text"
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
                 placeholder="Title"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                className="w-full px-4 py-2 text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-black text-sm"
               />
               <textarea
                 value={newDescription}
                 onChange={(e) => setNewDescription(e.target.value)}
                 placeholder="Description"
                 rows={4}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black text-sm"
+                className="w-full px-4 py-2 text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-black text-sm"
               />
               <button
                 onClick={createNote}
-                className="w-full py-2 px-4 bg-black text-white rounded-lg hover:bg-gray-900 transition font-medium"
+                className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
               >
                 Create Note
               </button>
@@ -192,7 +227,7 @@ export default function Dashboard() {
         )}
       </AnimatePresence>
 
-      {/* Description Popup Modal */}
+      {/* Note Description Modal */}
       <AnimatePresence>
         {selectedNote && (
           <motion.div
@@ -212,6 +247,7 @@ export default function Dashboard() {
             >
               <button
                 onClick={() => setSelectedNote(null)}
+                aria-label="Close modal"
                 className="absolute top-3 right-3 text-gray-500 hover:text-black"
               >
                 <X className="w-5 h-5" />
