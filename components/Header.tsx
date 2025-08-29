@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { LogOut, Loader } from "lucide-react";
+import { LogOut, Loader, X, Menu } from "lucide-react";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,29 +22,37 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        {/* Logo */}
         <Link
           href="/"
-          className="text-2xl flex items-center font-bold text-gray-800 hover:text-black transition"
+          className="text-2xl font-bold text-gray-800 hover:text-black transition"
         >
-          <Loader className="inline-block text-blue-600 mr-2" />
-          <p>Dashboard</p>
+          Tasks
         </Link>
 
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-700">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-md text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-md hover:bg-blue-50 hover:text-blue-600 transition"
           >
             <LogOut size={16} />
             Logout
           </button>
         </nav>
 
+        {/* Mobile Menu Button */}
         <button
-          className="md:hidden flex gap-1 items-center rounded-md text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition"
+          onClick={() => {
+            setIsOpen(false);
+            handleLogout();
+          }}
+          className="md:hidden block px-3 py-2 rounded-md text-left text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"
         >
+          <div className="flex items-center gap-2">
             <LogOut size={16} />
             Logout
+          </div>
         </button>
       </div>
     </header>
