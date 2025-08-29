@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Mail } from "lucide-react";
+import { Loader, Mail } from "lucide-react";
 
 const maskEmail = (email: string) => {
   const [user, domain] = email.split("@");
@@ -41,7 +41,7 @@ export default function OtpLogin() {
           text: "No account found. Redirecting to signup...",
           type: "error",
         });
-        setTimeout(() => router.replace("/signup"), 2000);
+        router.replace("/signup");
         return;
       }
 
@@ -71,7 +71,7 @@ export default function OtpLogin() {
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp }),
+        body: JSON.stringify({ email, otp, keepLoggedIn }),
       });
       const data = await res.json();
 
@@ -95,23 +95,32 @@ export default function OtpLogin() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-white text-black">
+      {/* Branding */}
+      <div className="absolute top-4 sm:left-6 text-3xl font-bold text-gray-800 flex items-center gap-2">
+        <Loader className="text-blue-600 size-7" />
+        <p className="text-black italic">HD</p>
+      </div>
+
       {/* Form Section */}
       <div className="w-full md:w-1/2 flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-sm border border-gray-200 rounded-lg shadow p-6 bg-white">
+        <div className="w-full max-w-sm border border-gray-200 rounded-xl shadow p-6 bg-white">
           <h2 className="text-2xl font-semibold text-center mb-2">Sign In</h2>
           <p className="text-sm text-center text-gray-500 mb-6">
             Please login to continue to your account.
           </p>
 
-          <label className="block text-sm font-medium mb-1">Email</label>
+          <label htmlFor="email" className="block text-sm font-medium mb-1">
+            Email
+          </label>
           <div className="relative mb-4">
             <Mail className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
             <input
+              id="email"
               type="email"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="pl-10 w-full py-2 border border-gray-300 rounded-md bg-white"
+              className="pl-10 w-full py-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-black"
               disabled={loading || step === "otp"}
             />
           </div>
@@ -119,7 +128,7 @@ export default function OtpLogin() {
           {step === "email" && (
             <button
               onClick={sendOtp}
-              className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition mb-4 disabled:opacity-50"
+              className="w-full bg-blue-600 text-white py-2 rounded-md hover:cursor-pointer transition mb-4 disabled:opacity-50"
               disabled={loading}
             >
               {loading ? "Sending OTP..." : "Send OTP"}
@@ -132,20 +141,25 @@ export default function OtpLogin() {
                 OTP sent to <strong>{maskEmail(email)}</strong>
               </p>
 
-              <label className="block text-sm font-medium mb-1">OTP</label>
+              <label htmlFor="otp" className="block text-sm font-medium mb-1">
+                OTP
+              </label>
               <input
-                type="number"
+                id="otp"
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
                 placeholder="Enter OTP"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3 bg-white"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3 bg-white focus:ring-2 focus:ring-black"
                 disabled={loading}
               />
 
               <div className="flex justify-between items-center text-sm mb-4">
                 <button
                   onClick={sendOtp}
-                  className="text-black underline hover:text-gray-700"
+                  className="bg-blue-600 underline hover:text-gray-700 disabled:opacity-50"
                   disabled={loading}
                 >
                   Resend OTP
@@ -183,19 +197,22 @@ export default function OtpLogin() {
 
           <p className="text-sm text-center mt-4 text-gray-500">
             Don’t have an account?{" "}
-            <a href="/signup" className="underline hover:text-black">
+            <a
+              href="/signup"
+              className="underline text-blue-600 hover:text-black"
+            >
               Create one
             </a>
           </p>
         </div>
       </div>
 
-      {/* Image Section (Only visible on desktop) */}
+      {/* Image Section */}
       <div className="hidden md:block md:w-1/2 h-full">
         <img
           src="/Illustration.png"
           alt="Sign In Illustration"
-          className="w-full h-[100vh] object-cover rounded-l-lg"
+          className="w-full h-screen object-cover rounded-l-lg"
         />
       </div>
     </div>

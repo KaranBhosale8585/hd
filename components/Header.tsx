@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { Menu, X, LogOut } from "lucide-react";
+import { Menu, X, LogOut, Loader } from "lucide-react";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,9 +24,10 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         <Link
           href="/"
-          className="text-2xl font-bold text-gray-800 hover:text-black transition"
+          className="text-2xl flex items-center font-bold text-gray-800 hover:text-black transition"
         >
-          Tasks
+          <Loader className="inline-block mr-2" />
+          <p>Dashboard</p>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-700">
