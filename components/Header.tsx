@@ -2,10 +2,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { LogOut, Loader, X, Menu } from "lucide-react";
+import { Loader, LogOut} from "lucide-react";
 
 const Header = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -25,9 +24,10 @@ const Header = () => {
         {/* Logo */}
         <Link
           href="/"
-          className="text-2xl font-bold text-gray-800 hover:text-black transition"
+          className=" text-gray-800 hover:text-black transition"
         >
-          Tasks
+          <Loader className="inline-block text-blue-600 mr-2" />
+          Dashboard
         </Link>
 
         {/* Desktop Navigation */}
@@ -44,7 +44,6 @@ const Header = () => {
         {/* Mobile Menu Button */}
         <button
           onClick={() => {
-            setIsOpen(false);
             handleLogout();
           }}
           className="md:hidden block px-3 py-2 rounded-md text-left text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"

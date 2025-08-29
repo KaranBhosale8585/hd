@@ -6,7 +6,6 @@ import { toast } from "react-hot-toast";
 import { Trash2, X } from "lucide-react";
 import Header from "@/components/Header";
 
-// ✅ Define types
 type User = {
   name: string;
   email: string;
@@ -66,8 +65,12 @@ export default function Dashboard() {
       setNewDescription("");
       setIsModalOpen(false);
       toast.success("Note created");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to create note");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to create note");
+      }
     }
   };
 
@@ -75,7 +78,7 @@ export default function Dashboard() {
     try {
       const res = await fetch("/api/notes/delete", {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" }, // ✅ fixed
+        headers: { "Content-Type": "application/json" }, 
         body: JSON.stringify({ id }),
       });
 
@@ -84,8 +87,12 @@ export default function Dashboard() {
 
       setNotes((prev) => prev.filter((n) => n._id !== id));
       toast.success("Note deleted");
-    } catch (error: any) {
-      toast.error(error.message || "Delete failed");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Delete failed");
+      }
     }
   };
 
