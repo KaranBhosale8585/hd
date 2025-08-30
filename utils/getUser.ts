@@ -13,7 +13,7 @@ export async function getUser() {
   try {
     const payload = await verifyToken(token);
     await connectDB();
-    const user = await User.findOne({ eamil: payload?.email });
+    const user = await User.findOne({ email: payload?.email });
     if (!user) return null;
     return user;
   } catch (error) {
